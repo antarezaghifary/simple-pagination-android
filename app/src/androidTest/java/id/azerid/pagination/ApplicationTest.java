@@ -1,4 +1,4 @@
-package com.esantiago.pagination;
+package id.azerid.pagination;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

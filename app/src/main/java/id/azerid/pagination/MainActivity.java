@@ -1,5 +1,6 @@
-package com.esantiago.pagination;
+package id.azerid.pagination;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -7,13 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.esantiago.pagination.adapter.AdapterItem;
-import com.esantiago.pagination.entity.Item;
 
+import id.azerid.pagination.adapter.AdapterItem;
+import id.azerid.pagination.entity.Item;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,15 +71,13 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
         }, 2000);
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onLoadMore() {
         Log.d("MainActivity_", "onLoadMore");
         new AsyncTask<Void, Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(Void... voids) {
-                /**
-                 *    Delete everything what is below // and place your code logic
-                 */
                 ///////////////////////////////////////////
                 int start = mAdapter.getItemCount() - 1;
                 int end = start + 15;

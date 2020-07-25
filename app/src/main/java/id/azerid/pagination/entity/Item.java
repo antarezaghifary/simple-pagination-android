@@ -1,7 +1,4 @@
-package com.esantiago.pagination.entity;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package id.azerid.pagination.entity;
 
 /**
  * Created by edwin on 19/03/16.

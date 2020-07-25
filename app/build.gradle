@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.2"
 
     defaultConfig {
-        applicationId "com.esantiago.pagination"
+        applicationId "id.azerid.pagination"
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1

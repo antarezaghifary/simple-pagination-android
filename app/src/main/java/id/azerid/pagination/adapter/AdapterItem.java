@@ -1,4 +1,4 @@
-package com.esantiago.pagination.adapter;
+package id.azerid.pagination.adapter;
 
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.esantiago.pagination.R;
-import com.esantiago.pagination.entity.Item;
+import id.azerid.pagination.R;
+import id.azerid.pagination.entity.Item;
 
 import java.util.ArrayList;
 import java.util.List;
