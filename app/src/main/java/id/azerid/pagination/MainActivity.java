@@ -3,16 +3,31 @@ package id.azerid.pagination;
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import id.azerid.pagination.adapter.AdapterItem;
-import id.azerid.pagination.entity.Item;
+import id.azerid.pagination.api.ApiInterfaces;
+import id.azerid.pagination.api.RetrofitApiCiient;
+import id.azerid.pagination.api.model.ApiResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,22 +35,27 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
         , SwipeRefreshLayout.OnRefreshListener {
 
 
+    ApiInterfaces apiInterfaces;
     private AdapterItem mAdapter;
-    private ArrayList<Item> itemList;
+    private ArrayList<ApiResponse> itemList;
     private SwipeRefreshLayout swipeRefresh;
+    private RecyclerView mRecyclerView;
+    private List<ApiResponse> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        apiInterfaces = RetrofitApiCiient.getClient().create(ApiInterfaces.class);
+
         itemList = new ArrayList<>();
         swipeRefresh = findViewById(R.id.swipeRefresh);
-        RecyclerView mRecyclerView = findViewById(R.id.rvList);
+        mRecyclerView = findViewById(R.id.rvList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new AdapterItem(this);
-        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setAdapter(mAdapter);
         swipeRefresh.setOnRefreshListener(this);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -47,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
                 }
             }
         });
-
+        surah();
 
     }
 
@@ -75,16 +95,16 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
     @Override
     public void onLoadMore() {
         Log.d("MainActivity_", "onLoadMore");
-        new AsyncTask<Void, Void, List<Item>>() {
+        new AsyncTask<Void, Void, List<ApiResponse>>() {
             @Override
-            protected List<Item> doInBackground(Void... voids) {
+            protected List<ApiResponse> doInBackground(Void... voids) {
                 ///////////////////////////////////////////
                 int start = mAdapter.getItemCount() - 1;
-                int end = start + 15;
-                List<Item> list = new ArrayList<>();
+                int end = start + 8;
+                List<ApiResponse> list = new ArrayList<>();
                 if (end < 200) {
                     for (int i = start + 1; i <= end; i++) {
-                        list.add(new Item("Item " + i));
+                        list.add(new ApiResponse());
                     }
                 }
                 try {
@@ -98,10 +118,10 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
             }
 
             @Override
-            protected void onPostExecute(List<Item> items) {
-                super.onPostExecute(items);
+            protected void onPostExecute(List<ApiResponse> items) {
+                super.onPostExecute(list);
                 mAdapter.dismissLoading();
-                mAdapter.addItemMore(items);
+                mAdapter.addItemMore(list);
                 mAdapter.setMore(true);
             }
         }.execute();
@@ -110,10 +130,39 @@ public class MainActivity extends AppCompatActivity implements AdapterItem.OnLoa
 
     private void loadData() {
         itemList.clear();
-        for (int i = 1; i <= 20; i++) {
-            itemList.add(new Item("Item " + i));
+        for (int i = 1; i <= 10; i++) {
+            itemList.add(new ApiResponse());
         }
         mAdapter.addAll(itemList);
-    }
 
+    }
+    private void surah() {
+        Call<List<ApiResponse>> call = apiInterfaces.getData();
+        call.enqueue(new Callback<List<ApiResponse>>() {
+            @Override
+            public void onResponse(Call<List<ApiResponse>> call, Response<List<ApiResponse>> response) {
+                if (response.isSuccessful()) {
+                    if (response.code() == 200){
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(new Gson().toJson(response.body()));
+                            Log.d("Respon", "data surah:  " + jsonArray);
+                            list = response.body();
+                            AdapterItem adapterItem = new AdapterItem(MainActivity.this::onLoadMore);
+                            adapterItem.addItemMore(list);
+                            mRecyclerView.setAdapter(adapterItem);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<List<ApiResponse>> call, Throwable t) {
+
+            }
+        });
+    }
 }

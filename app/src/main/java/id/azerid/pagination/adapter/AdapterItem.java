@@ -1,15 +1,16 @@
 package id.azerid.pagination.adapter;
 
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import id.azerid.pagination.R;
-import id.azerid.pagination.entity.Item;
+import id.azerid.pagination.api.model.ApiResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
 
-    private ArrayList<Item> itemList;
+    private ArrayList<ApiResponse> itemList;
 
     private OnLoadMoreListener onLoadMoreListener;
 
@@ -72,13 +73,13 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         }
     }
 
-    public void addAll(List<Item> lst){
+    public void addAll(List<ApiResponse> lst){
         itemList.clear();
         itemList.addAll(lst);
         notifyDataSetChanged();
     }
 
-    public void addItemMore(List<Item> lst){
+    public void addItemMore(List<ApiResponse> lst){
         int sizeInit = itemList.size();
         itemList.addAll(lst);
         notifyItemRangeChanged(sizeInit, itemList.size());
@@ -88,8 +89,8 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof StudentViewHolder) {
-            Item singleItem = (Item) itemList.get(position);
-            ((StudentViewHolder) holder).tvItem.setText(singleItem.getItem());
+            ApiResponse singleItem = (ApiResponse) itemList.get(position);
+            ((StudentViewHolder) holder).tvItem.setText(singleItem.getArti());
         }
     }
 
